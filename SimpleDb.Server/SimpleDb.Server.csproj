@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appsetting.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsetting.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="allpet.db.simple" Version="1.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleDb.Common\SimpleDb.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="allpet.peer.pipeline">
+      <HintPath>..\allpet.peer.pipeline.helloword\lib\allpet.peer.pipeline.dll</HintPath>
+    </Reference>
+    <Reference Include="allpet.Peer.Tcp.Interface">
+      <HintPath>..\allpet.peer.pipeline.helloword\lib\allpet.Peer.Tcp.Interface.dll</HintPath>
+    </Reference>
+    <Reference Include="allpet.Peer.Tcp.PeerV2">
+      <HintPath>..\allpet.peer.pipeline.helloword\lib\allpet.Peer.Tcp.PeerV2.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PipelineHelloWord.Common\PipelineHelloWord.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="allpet.peer.pipeline">
+      <HintPath>..\allpet.peer.pipeline.helloword\lib\allpet.peer.pipeline.dll</HintPath>
+    </Reference>
+    <Reference Include="allpet.Peer.Tcp.Interface">
+      <HintPath>..\allpet.peer.pipeline.helloword\lib\allpet.Peer.Tcp.Interface.dll</HintPath>
+    </Reference>
+    <Reference Include="allpet.Peer.Tcp.PeerV2">
+      <HintPath>..\allpet.peer.pipeline.helloword\lib\allpet.Peer.Tcp.PeerV2.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
