@@ -13,7 +13,7 @@ namespace SimpleDb.Server.Actor
         public PutUInt64Actor(IPipelineSystem system) : base(system)
         {
         }
-        public override void OnTell(IPipelineRef from, byte[] data)
+        public override void OnTell(IModuleRef from, byte[] data)
         {
             Console.WriteLine("Remote :PutUInt64Actor");
             MemoryStream mStream = new MemoryStream();

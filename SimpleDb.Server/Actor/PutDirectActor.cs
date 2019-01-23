@@ -14,7 +14,7 @@ namespace SimpleDb.Server.Actor
         public PutDirectActor(IPipelineSystem system) : base(system)
         {
         }
-        public override void OnTell(IPipelineRef from, byte[] data)
+        public override void OnTell(IModuleRef from, byte[] data)
         {
             Console.WriteLine("Remote :PutDirectActor");
             MemoryStream mStream = new MemoryStream();

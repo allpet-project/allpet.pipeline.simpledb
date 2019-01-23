@@ -13,7 +13,7 @@ namespace SimpleDb.Server.Actor
         public DeleteTableActor(IPipelineSystem system) : base(system)
         {
         }
-        public override void OnTell(IPipelineRef from, byte[] data)
+        public override void OnTell(IModuleRef from, byte[] data)
         {
             Console.WriteLine("Remote :DeleteTableActor");
 

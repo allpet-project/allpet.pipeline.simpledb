@@ -9,7 +9,7 @@ namespace SimpleDb.Common.Message
     public class GetDirectCommand: ICommand
     {
         [field: NonSerializedAttribute]
-        public IPipelineRef From { get; set; }
+        public IModuleRef From { get; set; }
         public byte[] TableId { get; set; }
         public byte[] Key { get; set; }
     }

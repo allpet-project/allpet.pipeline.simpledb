@@ -13,7 +13,7 @@ namespace SimpleDb.Server
         {
             Console.WriteLine("Server Hello World!");
            
-            var serverSys = AllPet.Pipeline.Instance.CreateActorSystem();
+            var serverSys = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             serverSys.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             serverSys.OpenListen(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 8888));
             serverSys.RegistPipeline("createtable", new CreateTableActor(serverSys));

@@ -56,32 +56,13 @@ namespace SimpleDb.Client
 
         private static void CreateTable()
         {
-            var systemL = AllPet.Pipeline.Instance.CreateActorSystem();
+            var systemL = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = systemL.Connect(remote).Result;
             var actor = systemL.GetPipeline(null, "127.0.0.1:8888/createtable");
             {
-                MemoryStream ms = new MemoryStream();
-                ////方法
-                //byte[] methodBytes = BitConverter.GetBytes(4);
-                //byte[] mlenBytes = BitConverter.GetBytes(methodBytes.Length);
-                //ms.Write(mlenBytes, 0, mlenBytes.Length);
-                //ms.Write(methodBytes, 0, methodBytes.Length);
-
-                ////tableId
-                //byte[] tableIdBytes = new byte[] { 0x01, 0x02, 0x03 };
-                //byte[] tlenBytes = BitConverter.GetBytes(tableIdBytes.Length);
-                //ms.Write(tlenBytes, 0, tlenBytes.Length);
-                //ms.Write(tableIdBytes, 0, tableIdBytes.Length);
-
-                ////data
-                //byte[] dataBytes = new byte[8000];
-                //byte[] dlenBytes = BitConverter.GetBytes(dataBytes.Length);
-                //ms.Write(dlenBytes, 0, dlenBytes.Length);
-                //ms.Write(dataBytes, 0, dataBytes.Length);
-
-                //actor.Tell(ms.ToArray());
+                MemoryStream ms = new MemoryStream();               
 
                 CreatTableCommand command = new CreatTableCommand()
                 {
@@ -95,7 +76,7 @@ namespace SimpleDb.Client
         }
         private static void PutDirect()
         {
-            var systemL = AllPet.Pipeline.Instance.CreateActorSystem();
+            var systemL = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = systemL.Connect(remote).Result;
@@ -115,38 +96,37 @@ namespace SimpleDb.Client
         }
         private static void GetDirect()
         {
-            var systemL = AllPet.Pipeline.Instance.CreateActorSystem();
-            systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
+            var clientServer = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
+            clientServer.OpenNetwork(new AllPet.peer.tcp.PeerOption());
+            clientServer.OpenListen(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 8889));
+            var getactor = new GetActor(clientServer);
+            clientServer.RegistPipeline("getback", getactor);
+            
+
+            var server = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
+            server.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
-            var systemref = systemL.Connect(remote).Result;
-            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/get");
-            {
-                MemoryStream ms = new MemoryStream();
-                ////方法
-                //byte[] methodBytes = BitConverter.GetBytes(4);
-                //byte[] mlenBytes = BitConverter.GetBytes(methodBytes.Length);
-                //ms.Write(mlenBytes, 0, mlenBytes.Length);
-                //ms.Write(methodBytes, 0, methodBytes.Length);
-
-                //tableId
-                byte[] tableIdBytes = new byte[] { 0x01, 0x02, 0x03 };
-                byte[] tlenBytes = BitConverter.GetBytes(tableIdBytes.Length);
-                ms.Write(tlenBytes, 0, tlenBytes.Length);
-                ms.Write(tableIdBytes, 0, tableIdBytes.Length);
-
-                //data
-                byte[] dataBytes = new byte[8000];
-                byte[] dlenBytes = BitConverter.GetBytes(dataBytes.Length);
-                ms.Write(dlenBytes, 0, dlenBytes.Length);
-                ms.Write(dataBytes, 0, dataBytes.Length);
-
-                actor.Tell(ms.ToArray());
-            }
+            var systemref = server.Connect(remote).Result;
+            getactor = new GetActor(server);
+            server.RegistPipeline("getback", getactor);
+            server.Start();
+            //var actor = server.GetPipeline(null, "127.0.0.1:8888/get");
+            //{
+            //    MemoryStream ms = new MemoryStream();
+            //    GetDirectCommand command = new GetDirectCommand()
+            //    {
+            //        TableId = new byte[] { 0x02, 0x02, 0x03 },
+            //        Key = new byte[] { 0x13, 0x13 }
+            //    };
+            //    BinaryFormatter bf = new BinaryFormatter();
+            //    bf.Serialize(ms, command);
+            //    actor.Tell(ms.ToArray());
+            //}
         }
 
         private static void PutUInt64()
         {
-            var systemL = AllPet.Pipeline.Instance.CreateActorSystem();
+            var systemL = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = systemL.Connect(remote).Result;
@@ -167,7 +147,7 @@ namespace SimpleDb.Client
 
         private static void DeleteDirect()
         {
-            var systemL = AllPet.Pipeline.Instance.CreateActorSystem();
+            var systemL = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = systemL.Connect(remote).Result;
@@ -187,7 +167,7 @@ namespace SimpleDb.Client
 
         private static void DeleteTable()
         {
-            var systemL = AllPet.Pipeline.Instance.CreateActorSystem();
+            var systemL = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = systemL.Connect(remote).Result;

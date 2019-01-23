@@ -3,6 +3,8 @@ using SimpleDb.Common;
 using SimpleDb.Common.Message;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace SimpleDb.Server.Actor
@@ -12,14 +14,22 @@ namespace SimpleDb.Server.Actor
         public GetDirectActor(IPipelineSystem system) : base(system)
         {
         }
-        public override void OnTell(IPipelineRef from, byte[] data)
+        public override void OnTell(IModuleRef from, byte[] data)
         {
             Console.WriteLine("Remote :");
-            var message = ConvertMessage.ConvertMessageObj(data, Method.GetDirect);
-            //message.from = from;
-            ServerDomain domain = new ServerDomain();
-            domain.ExcuteCommand(message);
-            domain.Dispose();
+            MemoryStream mStream = new MemoryStream();
+            mStream.Write(data, 0, data.Length);
+            mStream.Flush();
+            mStream.Position = 0;
+            BinaryFormatter bf = new BinaryFormatter();
+            if (mStream.Capacity > 0)
+            {
+                GetDirectCommand command = (GetDirectCommand)bf.Deserialize(mStream);
+                command.From = from;
+                ServerDomain domain = new ServerDomain();
+                domain.ExcuteCommand(command);
+                domain.Dispose();
+            }
         }
     }
 }
