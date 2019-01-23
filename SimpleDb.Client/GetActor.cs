@@ -8,9 +8,9 @@ using System.Text;
 
 namespace SimpleDb.Client
 {
-    public class GetActor : Pipeline
+    public class GetActor : Module
     {
-        public GetActor(IPipelineSystem system) : base(system)
+        public GetActor() : base(false)
         {
         }
         public override void OnStart()
@@ -27,7 +27,7 @@ namespace SimpleDb.Client
             actor.Tell(ms.ToArray());
 
         }
-        public override void OnTell(IModuleRef from, byte[] data)
+        public override void OnTell(IModulePipeline from, byte[] data)
         {
             Console.WriteLine("Remote :GetActor");
 

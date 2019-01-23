@@ -16,12 +16,12 @@ namespace SimpleDb.Server
             var serverSys = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             serverSys.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             serverSys.OpenListen(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 8888));
-            serverSys.RegistPipeline("createtable", new CreateTableActor(serverSys));
-            serverSys.RegistPipeline("put", new PutDirectActor(serverSys));
-            serverSys.RegistPipeline("get", new GetDirectActor(serverSys));
-            serverSys.RegistPipeline("putuint64", new PutUInt64Actor(serverSys));
-            serverSys.RegistPipeline("del", new DeleteActor(serverSys));
-            serverSys.RegistPipeline("deltable", new DeleteTableActor(serverSys));
+            serverSys.RegistModule("createtable", new CreateTableActor());
+            serverSys.RegistModule("put", new PutDirectActor());
+            serverSys.RegistModule("get", new GetDirectActor());
+            serverSys.RegistModule("putuint64", new PutUInt64Actor());
+            serverSys.RegistModule("del", new DeleteActor());
+            serverSys.RegistModule("deltable", new DeleteTableActor());
             Console.ReadLine();
         }
     }

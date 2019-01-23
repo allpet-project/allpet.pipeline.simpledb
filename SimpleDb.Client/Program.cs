@@ -99,16 +99,16 @@ namespace SimpleDb.Client
             var clientServer = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             clientServer.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             clientServer.OpenListen(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 8889));
-            var getactor = new GetActor(clientServer);
-            clientServer.RegistPipeline("getback", getactor);
+            var getactor = new GetActor();
+            clientServer.RegistModule("getback", getactor);
             
 
             var server = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             server.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = server.Connect(remote).Result;
-            getactor = new GetActor(server);
-            server.RegistPipeline("getback", getactor);
+            getactor = new GetActor();
+            server.RegistModule("getback", getactor);
             server.Start();
             //var actor = server.GetPipeline(null, "127.0.0.1:8888/get");
             //{

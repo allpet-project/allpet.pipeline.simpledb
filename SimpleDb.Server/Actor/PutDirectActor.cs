@@ -9,12 +9,15 @@ using System.Text;
 
 namespace SimpleDb.Server.Actor
 {
-    public class PutDirectActor : Pipeline
+    public class PutDirectActor : Module
     {
-        public PutDirectActor(IPipelineSystem system) : base(system)
+        public PutDirectActor() : base(false)
         {
         }
-        public override void OnTell(IModuleRef from, byte[] data)
+        public override void OnStart()
+        {
+        }
+        public override void OnTell(IModulePipeline from, byte[] data)
         {
             Console.WriteLine("Remote :PutDirectActor");
             MemoryStream mStream = new MemoryStream();

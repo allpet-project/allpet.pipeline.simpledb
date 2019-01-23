@@ -10,12 +10,15 @@ using System.Text;
 
 namespace SimpleDb.Server.Actor
 {
-    public class CreateTableActor : Pipeline
+    public class CreateTableActor : Module
     {
-        public CreateTableActor(IPipelineSystem system) : base(system)
+        public CreateTableActor() : base(false)
         {
         }
-        public override void OnTell(IModuleRef from, byte[] data)
+        public override void OnStart()
+        {
+        }
+        public override void OnTell(IModulePipeline from, byte[] data)
         {
             Console.WriteLine("Remote :CreateTableActor");
             

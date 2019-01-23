@@ -8,12 +8,15 @@ using System.Text;
 
 namespace SimpleDb.Server.Actor
 {
-    public class PutUInt64Actor : Pipeline
+    public class PutUInt64Actor : Module
     {
-        public PutUInt64Actor(IPipelineSystem system) : base(system)
+        public PutUInt64Actor() : base(false)
         {
         }
-        public override void OnTell(IModuleRef from, byte[] data)
+        public override void OnStart()
+        {
+        }
+        public override void OnTell(IModulePipeline from, byte[] data)
         {
             Console.WriteLine("Remote :PutUInt64Actor");
             MemoryStream mStream = new MemoryStream();
