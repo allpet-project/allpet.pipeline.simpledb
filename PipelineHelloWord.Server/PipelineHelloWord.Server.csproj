@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PipelineHelloWord.Common\PipelineHelloWord.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="allpet.peer.pipeline">
       <HintPath>..\allpet.peer.pipeline.helloword\lib\allpet.peer.pipeline.dll</HintPath>
     </Reference>
