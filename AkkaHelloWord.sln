@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleDb.Server", "SimpleDb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleDb.Client", "SimpleDb.Client\SimpleDb.Client.csproj", "{D0086B77-1E92-42AE-BE3F-B410B4E44ACB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplDb.Protocol.Sdk", "SimplDb.Protocol.Sdk\SimplDb.Protocol.Sdk.csproj", "{D2295B75-9485-479B-8842-BF91232BC744}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D0086B77-1E92-42AE-BE3F-B410B4E44ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0086B77-1E92-42AE-BE3F-B410B4E44ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0086B77-1E92-42AE-BE3F-B410B4E44ACB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2295B75-9485-479B-8842-BF91232BC744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2295B75-9485-479B-8842-BF91232BC744}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2295B75-9485-479B-8842-BF91232BC744}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2295B75-9485-479B-8842-BF91232BC744}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
