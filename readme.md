@@ -1,9 +1,9 @@
 ﻿## simpledb Module 协议格式定义##
 >
-|version| Method| Len   |                               command                             |  
-                        |        基本类型          |     |              object              |   
-|_ _ _ V_ _ _|___M___|___L___|___T___|_________D________|.....|___T___|___L___|_________D________|  
-|-1byte-|-2byte-|-4byte-|-4byte-|按照实际的类型计算|.....|-4byte-|-4byte-|按照实际的类型计算|  
+|   version   |   Method   |     Len    |                                               command                                                        |  
+                                        |               基本类型              |           |                           object                           |   
+|_ _ _ V_ _ _ |_ _ _M_ _ _ |_ _ _L_ _ _ |_ _ _T_ _ _ |_ _ _ _ _ _ _D_ _ _  _ _| . . . . . |_ _ _T_ _ _ |_ _ _L_ _ _ |_ _ _ _ _ _ _ _ _D_ _ _ _ _ _ _ _ |  
+|- - 1byte- - |- -2byte- - |- -4byte- - |- -4byte- - |   按照实际的类型计算   | . . . . . |- -4byte- - |- -4byte- - |        按照实际的类型计算        |  
 
 - V:协议本  
   M:simpledb的方法，例如delete、put、get等  
