@@ -1,5 +1,5 @@
-﻿using SimpleDb.Common;
-using SimpleDb.Common.Message;
+﻿using SimplDb.Protocol.Sdk;
+using SimplDb.Protocol.Sdk.Message;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,9 +8,10 @@ namespace SimpleDb.Server
 {
     public class ServerDomain: BaseDomain
     {
-        public ServerDomain():base(SimpleDbConfig.GetInstance().GetDbSetting())
+        private AllPet.db.simple.DB SimpleDb;
+        public ServerDomain(AllPet.db.simple.DB simpledb)
         {
-
+            this.SimpleDb = simpledb;
         }
         public void ExcuteCommand(ICommand command)
         {
@@ -20,37 +21,36 @@ namespace SimpleDb.Server
         public void Handle(CreatTableCommand command)
         {
             Console.WriteLine("CreatTableCommand");
-            simpledb.CreateTableDirect(command.TableId, command.Data);
+            this.SimpleDb.CreateTableDirect(command.TableId, command.Data);
         }
 
         public void Handle(GetDirectCommand command)
         {
             Console.WriteLine("GetDirectCommand");
-            var bytes = simpledb.GetDirect(command.TableId, command.Key);
-            command.From.Tell(bytes);
+            var bytes = this.SimpleDb.GetDirect(command.TableId, command.Key);            
         }
         public void Handle(PutDirectCommand command)
         {
             Console.WriteLine("PutDirectCommand");
-            simpledb.PutDirect(command.TableId, command.Key, command.Data);
+            this.SimpleDb.PutDirect(command.TableId, command.Key, command.Data);
         }
 
         public void Handle(PutUInt64Command command)
         {
             Console.WriteLine("PutUInt64Command");
-            simpledb.PutUInt64Direct(command.TableId, command.Key, command.Data);
+            this.SimpleDb.PutUInt64Direct(command.TableId, command.Key, command.Data);
         }
 
         public void Handle(DeleteCommand command)
         {
             Console.WriteLine("DeleteCommand");
-            simpledb.DeleteDirect(command.TableId, command.Key);
+            this.SimpleDb.DeleteDirect(command.TableId, command.Key);
         }
 
         public void Handle(DeleteTableCommand command)
         {
             Console.WriteLine("DeleteTableCommand");
-            simpledb.DeleteTableDirect(command.TableId);
+            this.SimpleDb.DeleteTableDirect(command.TableId);
         }
     }
 }

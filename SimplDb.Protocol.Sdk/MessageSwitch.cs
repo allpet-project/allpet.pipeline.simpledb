@@ -1,5 +1,4 @@
-﻿using SimpleDb.Common;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace SimplDb.Protocol.Sdk
@@ -64,9 +63,13 @@ namespace SimplDb.Protocol.Sdk
                 fieldValue = field.GetValue(commandType); // Get value
                 typeCode = Type.GetTypeCode(fieldValue.GetType());  // get type
                 byte[] temp;
-                //计算字段的长度
+                //先写类型
+                Array.Copy(BitConverter.GetBytes((int)typeCode), 0, data, offset, sizeof(int));
+                offset += fiedLen;
+
                 if (typeCode == TypeCode.Object)
                 {
+                    //如果是Object要有长度
                     fiedLen = ((byte[])fieldValue).Length;
                     var lenByte = BitConverter.GetBytes(fiedLen);
                     Array.Copy(lenByte, 0, data, offset, lenByte.Length);
@@ -75,17 +78,11 @@ namespace SimplDb.Protocol.Sdk
                     offset += fiedLen;
                     continue;
                 }
-                else
-                {
-                    fiedLen = Marshal.SizeOf(fieldValue);
-                    Array.Copy(BitConverter.GetBytes(fiedLen), 0, data, offset, fiedLen);
-                    offset += fiedLen;
-                }
 
                 switch (typeCode)
                 {
                     case TypeCode.Single: // float
-                        {
+                        {                            
                             temp = BitConverter.GetBytes((Single)fieldValue);                            
                             Array.Copy(temp, 0, data, offset, sizeof(Single));
                             break;
@@ -147,5 +144,117 @@ namespace SimplDb.Protocol.Sdk
             return data;
         }
 
+        public static T BytesToCommand<T>(byte[] data) where T : ICommand
+        {
+            //获取TypeCode
+            var datalen = data.Length;
+            T command = default(T);
+
+            if (Marshal.SizeOf(command) != data.Length)
+            {
+                throw new Exception("command type is error");
+            }
+            
+            Type commandType = command.GetType();
+
+            int offset = 0;
+            object fieldValue;
+            TypeCode typeCode;
+            byte[] temp = null;
+
+            int fiedLen = 0;
+            foreach (var field in commandType.GetFields())
+            {
+                fieldValue = field.GetValue(commandType); // Get value
+                typeCode = Type.GetTypeCode(fieldValue.GetType());  // get type
+                
+                
+                if (typeCode == TypeCode.Object)
+                {
+                    //如果是Object先读长度（int 4个字节）
+                    fiedLen = BitConverter.ToInt32(data, offset);
+                    offset += sizeof(int);
+
+                    temp = new byte[fiedLen];
+                    Array.Copy(data, offset, temp, 0, fiedLen);
+                    offset += fiedLen;
+
+                    field.SetValue(command, temp);
+                    continue;
+                }
+
+                switch (typeCode)
+                {
+                    case TypeCode.Single: // float
+                        {
+                            fiedLen = sizeof(Single);
+                            temp = new byte[fiedLen];                            
+                            break;
+                        }
+                    case TypeCode.Int32:
+                        {
+                            fiedLen = sizeof(Int32);
+                            temp = new byte[fiedLen];
+                            
+                            break;
+                        }
+                    case TypeCode.UInt32:
+                        {
+                            fiedLen = sizeof(UInt32);
+                            temp = new byte[fiedLen];
+                            break;
+                        }
+                    case TypeCode.Int16:
+                        {
+                            fiedLen = sizeof(Int16);
+                            temp = new byte[fiedLen];
+
+                            break;
+                        }
+                    case TypeCode.UInt16:
+                        {
+                            fiedLen = sizeof(UInt16);
+                            temp = new byte[fiedLen];
+
+                            break;
+                        }
+                    case TypeCode.Int64:
+                        {
+                            fiedLen = sizeof(Int64);
+                            temp = new byte[fiedLen];
+
+                            break;
+                        }
+                    case TypeCode.UInt64:
+                        {
+                            fiedLen = sizeof(UInt64);
+                            temp = new byte[fiedLen];
+
+                            break;
+                        }
+                    case TypeCode.Double:
+                        {
+                            fiedLen = sizeof(Double);
+                            temp = new byte[fiedLen];
+
+                            break;
+                        }
+                    case TypeCode.Byte:
+                        {
+                            fiedLen = sizeof(Byte);
+                            temp = new byte[fiedLen];
+
+                            break;
+                        }
+                    default:
+                        break;
+                }
+                Array.Copy(data, offset, temp, 0, fiedLen);
+                field.SetValue(command, temp);
+                offset += fiedLen;
+
+            }
+            return command;
+        }
     }
 }

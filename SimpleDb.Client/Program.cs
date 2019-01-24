@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
-using SimpleDb.Common.Message;
+using SimplDb.Protocol.Sdk;
+using SimplDb.Protocol.Sdk.Message;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -85,13 +86,16 @@ namespace SimpleDb.Client
                 MemoryStream ms = new MemoryStream();
                 PutDirectCommand command = new PutDirectCommand()
                 {
-                    TableId = new byte[] { 0x02, 0x02, 0x03 },
-                    Key = new byte[] { 0x12,0x12},
+                    TableId = new byte[] { 0x03, 0x02, 0x03 },
+                    Key = new byte[] { 0x10,0x10},
                     Data = new byte[8000]
                 };
                 BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, command);
+                bf.Serialize(ms, command);                
                 actor.Tell(ms.ToArray());
+
+                var bytes = ProtocolFormatter.Serialize< PutDirectCommand>(Method.PutDirect,command);
+                actor.Tell(bytes);
             }
         }
         private static void GetDirect()

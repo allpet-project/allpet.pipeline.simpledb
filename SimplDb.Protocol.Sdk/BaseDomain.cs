@@ -1,7 +1,6 @@
 ﻿using System;
-using AllPet.db.simple;
 
-namespace SimpleDb.Common
+namespace SimplDb.Protocol.Sdk
 {
     public class BaseDomain
     {

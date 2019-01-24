@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using SimpleDb.Common;
-using SimpleDb.Common.Message;
 using SimpleDb.Server.Actor;
 using System;
 using System.IO;

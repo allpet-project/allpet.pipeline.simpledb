@@ -1,7 +1,5 @@
 ﻿using AllPet.Pipeline;
 using Newtonsoft.Json;
-using SimpleDb.Common;
-using SimpleDb.Common.Message;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,18 +21,18 @@ namespace SimpleDb.Server.Actor
             Console.WriteLine("Remote :CreateTableActor");
             
             //var message = ConvertMessage.ConvertMessageObj(data, Method.CreateTable);
-            MemoryStream mStream = new MemoryStream();            
-            mStream.Write(data, 0, data.Length);
-            mStream.Flush();
-            mStream.Position = 0;
-            BinaryFormatter bf = new BinaryFormatter();
-            if (mStream.Capacity > 0)
-            {
-                CreatTableCommand command = (CreatTableCommand)bf.Deserialize(mStream);
-                ServerDomain domain = new ServerDomain();
-                domain.ExcuteCommand(command);
-                domain.Dispose();
-            }
+            //MemoryStream mStream = new MemoryStream();            
+            //mStream.Write(data, 0, data.Length);
+            //mStream.Flush();
+            //mStream.Position = 0;
+            //BinaryFormatter bf = new BinaryFormatter();
+            //if (mStream.Capacity > 0)
+            //{
+            //    CreatTableCommand command = (CreatTableCommand)bf.Deserialize(mStream);
+            //    ServerDomain domain = new ServerDomain();
+            //    domain.ExcuteCommand(command);
+            //    domain.Dispose();
+            //}
             
         }
     }

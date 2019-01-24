@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SimpleDb.Common\SimpleDb.Common.csproj" />
+    <ProjectReference Include="..\SimplDb.Protocol.Sdk\SimplDb.Protocol.Sdk.csproj" />
   </ItemGroup>
 
   <ItemGroup>

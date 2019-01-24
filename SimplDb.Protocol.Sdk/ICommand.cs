@@ -4,8 +4,8 @@ using System.Text;
 
 namespace SimplDb.Protocol.Sdk
 {
-    public class Protocol
+    public interface ICommand
     {
-
+       
     }
 }
