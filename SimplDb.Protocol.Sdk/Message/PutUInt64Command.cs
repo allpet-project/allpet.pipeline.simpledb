@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SimplDb.Protocol.Sdk.Message
 {
-    [Serializable()]
-    public class PutUInt64Command:ICommand
+    [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct PutUInt64Command:ICommand
     {
-        public byte[] TableId { get; set; }
-        public byte[] Key { get; set; }
-        public UInt64 Data { get; set; }
+        public byte[] TableId;
+        public byte[] Key;
+        public UInt64 Data;
     }
 }

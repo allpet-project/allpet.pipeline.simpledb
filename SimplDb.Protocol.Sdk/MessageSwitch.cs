@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace SimplDb.Protocol.Sdk
@@ -51,135 +52,140 @@ namespace SimplDb.Protocol.Sdk
         public static byte[] CommandToBytes<T>(T command) where T:ICommand
         {
             Type commandType = command.GetType();
-            byte[] data = new byte[Marshal.SizeOf(command)];
-
-            int offset = 0;
+            MemoryStream ms = new MemoryStream();
+            
             object fieldValue;
             TypeCode typeCode;
             
             int fiedLen = 0;
             foreach (var field in commandType.GetFields())
             {
-                fieldValue = field.GetValue(commandType); // Get value
+                fieldValue = field.GetValue(command); // Get value
                 typeCode = Type.GetTypeCode(fieldValue.GetType());  // get type
-                byte[] temp;
-                //先写类型
-                Array.Copy(BitConverter.GetBytes((int)typeCode), 0, data, offset, sizeof(int));
-                offset += fiedLen;
+                byte[] temp=null;
+                //每个参数前要有类型（固定为1个字节）
+                byte[] typeCodeBytes = new byte[] { (byte)typeCode };
+                ms.Write(typeCodeBytes, 0, typeCodeBytes.Length);
 
-                if (typeCode == TypeCode.Object)
+                if (typeCode == TypeCode.Object || typeCode == TypeCode.String)
                 {
                     //如果是Object要有长度
-                    fiedLen = ((byte[])fieldValue).Length;
-                    var lenByte = BitConverter.GetBytes(fiedLen);
-                    Array.Copy(lenByte, 0, data, offset, lenByte.Length);
-                    offset += lenByte.Length;
-                    Array.Copy(((byte[])fieldValue), 0, data, offset, fiedLen);
-                    offset += fiedLen;
+                    if (typeCode == TypeCode.String)
+                    {
+                        temp = System.Text.Encoding.UTF8.GetBytes(fieldValue.ToString());
+                        var lenByte = BitConverter.GetBytes(temp.Length);
+                        ms.Write(lenByte, 0, lenByte.Length);
+                        ms.Write(temp, 0, temp.Length);
+                    }
+                    else
+                    {                        
+                        fiedLen = ((byte[])fieldValue).Length;
+                        var lenByte = BitConverter.GetBytes(fiedLen);
+                        ms.Write(lenByte, 0, lenByte.Length);
+                        ms.Write(((byte[])fieldValue), 0, fiedLen);
+                    }
                     continue;
                 }
 
                 switch (typeCode)
                 {
-                    case TypeCode.Single: // float
+                    case TypeCode.Single: 
                         {                            
-                            temp = BitConverter.GetBytes((Single)fieldValue);                            
-                            Array.Copy(temp, 0, data, offset, sizeof(Single));
+                            temp = BitConverter.GetBytes((Single)fieldValue);
                             break;
                          }
                     case TypeCode.Int32:
                         {
-                            temp = BitConverter.GetBytes((Int32)fieldValue);                            
-                            Array.Copy(temp, 0, data, offset, sizeof(Int32));
+                            temp = BitConverter.GetBytes((Int32)fieldValue);
                             break;
                         }
                     case TypeCode.UInt32:
                         {
-                            temp = BitConverter.GetBytes((UInt32)fieldValue);                            
-                            Array.Copy(temp, 0, data, offset, sizeof(UInt32));
+                            temp = BitConverter.GetBytes((UInt32)fieldValue);
                             break;
                         }
                     case TypeCode.Int16:
                         {
-                            temp = BitConverter.GetBytes((Int16)fieldValue);                            
-                            Array.Copy(temp, 0, data, offset, sizeof(Int16));
+                            temp = BitConverter.GetBytes((Int16)fieldValue);
                             break;
                         }
                     case TypeCode.UInt16:
                         {
-                            temp = BitConverter.GetBytes((UInt16)fieldValue);                            
-                            Array.Copy(temp, 0, data, offset, sizeof(UInt16));
+                            temp = BitConverter.GetBytes((UInt16)fieldValue);
                             break;
                         }
                     case TypeCode.Int64:
                         {
-                            temp = BitConverter.GetBytes((Int64)fieldValue);                            
-                            Array.Copy(temp, 0, data, offset, sizeof(Int64));
+                            temp = BitConverter.GetBytes((Int64)fieldValue);
                             break;
                         }
                     case TypeCode.UInt64:
                         {
-                            temp = BitConverter.GetBytes((UInt64)fieldValue);                            
-                            Array.Copy(temp, 0, data, offset, sizeof(UInt64));
+                            temp = BitConverter.GetBytes((UInt64)fieldValue);
                             break;
                         }
                     case TypeCode.Double:
                         {
-                            temp = BitConverter.GetBytes((Double)fieldValue);                            
-                            Array.Copy(temp, 0, data, offset, sizeof(Double));
+                            temp = BitConverter.GetBytes((Double)fieldValue);
                             break;
                         }
                     case TypeCode.Byte:
                         {
-                            data[offset] = (Byte)fieldValue;
+                            temp = new byte[1];
+                            temp[0]= (Byte)fieldValue;
                             break;
                         }
                     default:
                         break;
                 }
-                
-                offset += fiedLen;
+                if (temp != null)
+                {
+                    ms.Write(temp, 0, temp.Length);
+                }
                 
             }
-            return data;
+            return ms.ToArray();
         }
 
-        public static T BytesToCommand<T>(byte[] data) where T : ICommand
+        public static T BytesToCommand<T>(byte[] data) where T : new()
         {
             //获取TypeCode
             var datalen = data.Length;
-            T command = default(T);
+            T command = new T();
 
-            if (Marshal.SizeOf(command) != data.Length)
-            {
-                throw new Exception("command type is error");
-            }
-            
+
             Type commandType = command.GetType();
+            var obj = Activator.CreateInstance(commandType);
 
             int offset = 0;
-            object fieldValue;
             TypeCode typeCode;
             byte[] temp = null;
 
             int fiedLen = 0;
             foreach (var field in commandType.GetFields())
             {
-                fieldValue = field.GetValue(commandType); // Get value
-                typeCode = Type.GetTypeCode(fieldValue.GetType());  // get type
-                
-                
-                if (typeCode == TypeCode.Object)
+                //先取参数的类型（固定为1个字节）
+                typeCode = (TypeCode)data[offset];
+                offset += sizeof(byte);
+
+                if (typeCode == TypeCode.Object || typeCode == TypeCode.String)
                 {
                     //如果是Object先读长度（int 4个字节）
                     fiedLen = BitConverter.ToInt32(data, offset);
                     offset += sizeof(int);
-
                     temp = new byte[fiedLen];
                     Array.Copy(data, offset, temp, 0, fiedLen);
                     offset += fiedLen;
 
-                    field.SetValue(command, temp);
+                    if (typeCode == TypeCode.String)
+                    {
+                        var stringValue = System.Text.Encoding.UTF8.GetString(temp);
+                        field.SetValue(obj, stringValue);
+                    }
+                    else
+                    {
+                        field.SetValue(obj, temp);
+                    }
                     continue;
                 }
 
@@ -188,7 +194,7 @@ namespace SimplDb.Protocol.Sdk
                     case TypeCode.Single: // float
                         {
                             fiedLen = sizeof(Single);
-                            temp = new byte[fiedLen];                            
+                            temp = new byte[fiedLen];
                             break;
                         }
                     case TypeCode.Int32:
@@ -250,11 +256,11 @@ namespace SimplDb.Protocol.Sdk
                         break;
                 }
                 Array.Copy(data, offset, temp, 0, fiedLen);
-                field.SetValue(command, temp);
+                field.SetValue(obj, temp);
                 offset += fiedLen;
 
             }
-            return command;
+            return (T)obj;
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SimplDb.Protocol.Sdk.Message
 {
-    [Serializable()]
-    public class GetDirectCommand: ICommand
+    [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct GetDirectCommand: ICommand
     {
-        public byte[] TableId { get; set; }
-        public byte[] Key { get; set; }
+        public byte[] TableId;
+        public byte[] Key;
     }
 }

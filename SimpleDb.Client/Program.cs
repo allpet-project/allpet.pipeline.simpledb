@@ -81,19 +81,26 @@ namespace SimpleDb.Client
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = systemL.Connect(remote).Result;
-            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/put");
+            systemL.Start();
+            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/simpledb");
             {
-                MemoryStream ms = new MemoryStream();
+                //MemoryStream ms = new MemoryStream();
+                //PutDirectCommand command = new PutDirectCommand()
+                //{
+                //    TableId = new byte[] { 0x03, 0x02, 0x03 },
+                //    Key = new byte[] { 0x10,0x10},
+                //    Data = new byte[8000]
+                //};
+                //BinaryFormatter bf = new BinaryFormatter();
+                //bf.Serialize(ms, command);                
+                //actor.Tell(ms.ToArray());
+
                 PutDirectCommand command = new PutDirectCommand()
                 {
                     TableId = new byte[] { 0x03, 0x02, 0x03 },
-                    Key = new byte[] { 0x10,0x10},
-                    Data = new byte[8000]
+                    Key = new byte[] { 0x10, 0x10 },
+                    Data = new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }
                 };
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, command);                
-                actor.Tell(ms.ToArray());
-
                 var bytes = ProtocolFormatter.Serialize< PutDirectCommand>(Method.PutDirect,command);
                 actor.Tell(bytes);
             }

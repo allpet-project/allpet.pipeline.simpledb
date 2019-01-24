@@ -20,6 +20,7 @@ namespace SimpleDb.Server
             serverSys.RegistModule("putuint64", new PutUInt64Actor());
             serverSys.RegistModule("del", new DeleteActor());
             serverSys.RegistModule("deltable", new DeleteTableActor());
+            serverSys.RegistModule("simpledb", new SimpleDbModule());
             serverSys.Start();
             Console.ReadLine();
         }
