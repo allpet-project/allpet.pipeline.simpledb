@@ -61,18 +61,17 @@ namespace SimpleDb.Client
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = systemL.Connect(remote).Result;
-            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/createtable");
-            {
-                MemoryStream ms = new MemoryStream();               
+            systemL.Start();
+            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/simpledb");
+            {              
 
                 CreatTableCommand command = new CreatTableCommand()
                 {
-                     TableId = new byte[] { 0x01, 0x02, 0x03 },
+                     TableId = new byte[] { 0x04, 0x02, 0x03 },
                      Data  = new byte[8000]
                 };
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, command);
-                actor.Tell(ms.ToArray());
+                var bytes = ProtocolFormatter.Serialize<CreatTableCommand>(Method.CreateTable, command);
+                actor.Tell(bytes);
             }
         }
         private static void PutDirect()
@@ -84,17 +83,6 @@ namespace SimpleDb.Client
             systemL.Start();
             var actor = systemL.GetPipeline(null, "127.0.0.1:8888/simpledb");
             {
-                //MemoryStream ms = new MemoryStream();
-                //PutDirectCommand command = new PutDirectCommand()
-                //{
-                //    TableId = new byte[] { 0x03, 0x02, 0x03 },
-                //    Key = new byte[] { 0x10,0x10},
-                //    Data = new byte[8000]
-                //};
-                //BinaryFormatter bf = new BinaryFormatter();
-                //bf.Serialize(ms, command);                
-                //actor.Tell(ms.ToArray());
-
                 PutDirectCommand command = new PutDirectCommand()
                 {
                     TableId = new byte[] { 0x03, 0x02, 0x03 },
@@ -141,18 +129,17 @@ namespace SimpleDb.Client
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = systemL.Connect(remote).Result;
-            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/putuint64");
+            systemL.Start();
+            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/simpledb");
             {
-                MemoryStream ms = new MemoryStream();
                 PutUInt64Command command = new PutUInt64Command()
                 {
                     TableId = new byte[] { 0x02, 0x02, 0x03 },
-                    Key = new byte[] { 0x13, 0x13 },
+                    Key = new byte[] { 0x14, 0x13 },
                     Data = 18446744073709551614
                 };
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, command);
-                actor.Tell(ms.ToArray());
+                var bytes = ProtocolFormatter.Serialize<PutUInt64Command>(Method.PutUint64, command);
+                actor.Tell(bytes);
             }
         }
 
@@ -162,17 +149,16 @@ namespace SimpleDb.Client
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = systemL.Connect(remote).Result;
-            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/del");
+            systemL.Start();
+            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/simpledb");
             {
-                MemoryStream ms = new MemoryStream();
                 DeleteCommand command = new DeleteCommand()
                 {
                     TableId = new byte[] { 0x02, 0x02, 0x03 },
-                    Key = new byte[] { 0x12, 0x12 },
+                    Key = new byte[] { 0x13, 0x13 },
                 };
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, command);
-                actor.Tell(ms.ToArray());
+                var bytes = ProtocolFormatter.Serialize<DeleteCommand>(Method.Delete, command);
+                actor.Tell(bytes);
             }
         }
 
@@ -182,16 +168,15 @@ namespace SimpleDb.Client
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
             var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
             var systemref = systemL.Connect(remote).Result;
-            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/deltable");
+            systemL.Start();
+            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/simpledb");
             {
-                MemoryStream ms = new MemoryStream();
                 DeleteTableCommand command = new DeleteTableCommand()
                 {
-                    TableId = new byte[] { 0x01, 0x02, 0x03 }
+                    TableId = new byte[] { 0x02, 0x02, 0x03 }
                 };
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, command);
-                actor.Tell(ms.ToArray());
+                var bytes = ProtocolFormatter.Serialize<DeleteTableCommand>(Method.DeleteTable, command);
+                actor.Tell(bytes);
             }
         }
     }

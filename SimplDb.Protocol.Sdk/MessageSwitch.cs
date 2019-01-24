@@ -160,6 +160,7 @@ namespace SimplDb.Protocol.Sdk
             int offset = 0;
             TypeCode typeCode;
             byte[] temp = null;
+            object fieldValue = null;
 
             int fiedLen = 0;
             foreach (var field in commandType.GetFields())
@@ -195,68 +196,78 @@ namespace SimplDb.Protocol.Sdk
                         {
                             fiedLen = sizeof(Single);
                             temp = new byte[fiedLen];
+                            Array.Copy(data, offset, temp, 0, fiedLen);
+                            fieldValue = BitConverter.ToSingle(temp,0);
                             break;
                         }
                     case TypeCode.Int32:
                         {
                             fiedLen = sizeof(Int32);
                             temp = new byte[fiedLen];
-                            
+                            Array.Copy(data, offset, temp, 0, fiedLen);
+                            fieldValue = BitConverter.ToInt32(temp, 0);
                             break;
                         }
                     case TypeCode.UInt32:
                         {
                             fiedLen = sizeof(UInt32);
                             temp = new byte[fiedLen];
+                            Array.Copy(data, offset, temp, 0, fiedLen);
+                            fieldValue = BitConverter.ToUInt32(temp, 0);
                             break;
                         }
                     case TypeCode.Int16:
                         {
                             fiedLen = sizeof(Int16);
                             temp = new byte[fiedLen];
-
+                            Array.Copy(data, offset, temp, 0, fiedLen);
+                            fieldValue = BitConverter.ToInt16(temp, 0);
                             break;
                         }
                     case TypeCode.UInt16:
                         {
                             fiedLen = sizeof(UInt16);
                             temp = new byte[fiedLen];
-
+                            Array.Copy(data, offset, temp, 0, fiedLen);
+                            fieldValue = BitConverter.ToUInt16(temp, 0);
                             break;
                         }
                     case TypeCode.Int64:
                         {
                             fiedLen = sizeof(Int64);
                             temp = new byte[fiedLen];
-
+                            Array.Copy(data, offset, temp, 0, fiedLen);
+                            fieldValue = BitConverter.ToInt64(temp, 0);
                             break;
                         }
                     case TypeCode.UInt64:
                         {
                             fiedLen = sizeof(UInt64);
                             temp = new byte[fiedLen];
-
+                            Array.Copy(data, offset, temp, 0, fiedLen);
+                            fieldValue = BitConverter.ToUInt64(temp, 0);
                             break;
                         }
                     case TypeCode.Double:
                         {
                             fiedLen = sizeof(Double);
                             temp = new byte[fiedLen];
-
+                            Array.Copy(data, offset, temp, 0, fiedLen);
+                            fieldValue = BitConverter.ToDouble(temp, 0);
                             break;
                         }
                     case TypeCode.Byte:
                         {
                             fiedLen = sizeof(Byte);
                             temp = new byte[fiedLen];
-
+                            Array.Copy(data, offset, temp, 0, fiedLen);
+                            fieldValue = temp[0];
                             break;
                         }
                     default:
                         break;
-                }
-                Array.Copy(data, offset, temp, 0, fiedLen);
-                field.SetValue(obj, temp);
+                }                
+                field.SetValue(obj, fieldValue);
                 offset += fiedLen;
 
             }
