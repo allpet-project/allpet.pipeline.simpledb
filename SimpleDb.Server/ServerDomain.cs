@@ -1,4 +1,5 @@
-﻿using SimplDb.Protocol.Sdk;
+﻿using AllPet.Pipeline;
+using SimplDb.Protocol.Sdk;
 using SimplDb.Protocol.Sdk.Message;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,11 @@ namespace SimpleDb.Server
     public class ServerDomain: BaseDomain
     {
         private AllPet.db.simple.DB SimpleDb;
-        public ServerDomain(AllPet.db.simple.DB simpledb)
+        private IModulePipeline From;
+        public ServerDomain(AllPet.db.simple.DB simpledb, IModulePipeline from)
         {
             this.SimpleDb = simpledb;
+            this.From = from;
         }
         public void ExcuteCommand(ICommand command)
         {
@@ -27,7 +30,11 @@ namespace SimpleDb.Server
         public void Handle(GetDirectCommand command)
         {
             Console.WriteLine("GetDirectCommand");
-            var bytes = this.SimpleDb.GetDirect(command.TableId, command.Key);            
+            var bytes = this.SimpleDb.GetDirect(command.TableId, command.Key);
+            if (this.From != null && bytes != null)
+            {
+                this.From.Tell(bytes);
+            }
         }
         public void Handle(PutDirectCommand command)
         {
@@ -51,6 +58,17 @@ namespace SimpleDb.Server
         {
             Console.WriteLine("DeleteTableCommand");
             this.SimpleDb.DeleteTableDirect(command.TableId);
+        }
+
+        public void Handle(GetUint64Command command)
+        {
+            Console.WriteLine("GetUint64Command");
+            var longValue = this.SimpleDb.GetUInt64Direct(command.TableId, command.Key);
+            if (this.From != null )
+            {
+                var bytes = BitConverter.GetBytes(longValue);
+                this.From.Tell(bytes);
+            }
         }
     }
 }

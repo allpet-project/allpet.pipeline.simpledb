@@ -21,13 +21,19 @@ namespace SimpleDb.Client
         {
             while (true)
             {
+                Console.WriteLine("0.TestNet>");
                 Console.WriteLine("1.CreateTable>");
                 Console.WriteLine("2.PutDirect>");
                 Console.WriteLine("3.GetDirect>");
                 Console.WriteLine("4.PutUInt64>");
                 Console.WriteLine("5.DeleteDirect>");
                 Console.WriteLine("6.DeleteTable>");
+                Console.WriteLine("7.GetUInt64>");
                 var line = Console.ReadLine();
+                if (line == "0")
+                {
+                    TestNet();
+                }
                 if (line == "1")
                 {
                     CreateTable();
@@ -52,9 +58,27 @@ namespace SimpleDb.Client
                 {
                     DeleteTable();
                 }
+                if (line == "7")
+                {
+                    GetUInt64();
+                }
             }
         }
-
+        private static void TestNet()
+        {
+            var systemL = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
+            systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
+            var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
+            var systemref = systemL.Connect(remote).Result;
+            systemL.Start();
+            var actor = systemL.GetPipeline(null, "127.0.0.1:8888/simpledb");
+            {
+                for (var i = 0; i < 10000; i++)
+                {
+                    actor.Tell(new byte[8096]);
+                }
+            }
+        }
         private static void CreateTable()
         {
             var systemL = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
@@ -93,22 +117,25 @@ namespace SimpleDb.Client
                 actor.Tell(bytes);
             }
         }
-        private static void GetDirect()
+        private async static void GetDirect()
         {
-            var clientServer = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
-            clientServer.OpenNetwork(new AllPet.peer.tcp.PeerOption());
-            clientServer.OpenListen(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 8889));
-            var getactor = new GetActor();
-            clientServer.RegistModule("getback", getactor);
-            
-
             var server = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             server.OpenNetwork(new AllPet.peer.tcp.PeerOption());
-            var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
-            var systemref = server.Connect(remote).Result;
-            getactor = new GetActor();
-            server.RegistModule("getback", getactor);
+            server.RegistModule("me", new GetActor());
             server.Start();
+            var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
+
+            //連接
+            var systemref = await server.Connect(remote);
+            
+            var actor = server.GetPipeline(null, "this/me");
+            GetDirectCommand command = new GetDirectCommand()
+            {
+                TableId = new byte[] { 0x03, 0x02, 0x03 },
+                Key = new byte[] { 0x10, 0x10 }
+            };
+            var bytes = ProtocolFormatter.Serialize<GetDirectCommand>(Method.GetDirect, command);
+            actor.Tell(bytes);
             //var actor = server.GetPipeline(null, "127.0.0.1:8888/get");
             //{
             //    MemoryStream ms = new MemoryStream();
@@ -121,7 +148,7 @@ namespace SimpleDb.Client
             //    bf.Serialize(ms, command);
             //    actor.Tell(ms.ToArray());
             //}
-        }
+        }        
 
         private static void PutUInt64()
         {
@@ -141,6 +168,27 @@ namespace SimpleDb.Client
                 var bytes = ProtocolFormatter.Serialize<PutUInt64Command>(Method.PutUint64, command);
                 actor.Tell(bytes);
             }
+        }
+        private async static void GetUInt64()
+        {
+            var server = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
+            server.OpenNetwork(new AllPet.peer.tcp.PeerOption());
+            server.RegistModule("me", new GetUInt64Actor());
+            server.Start();
+            var remote = new System.Net.IPEndPoint(System.Net.IPAddress.Parse("127.0.0.1"), 8888);
+
+            //連接
+            var systemref = await server.Connect(remote);
+
+            var actor = server.GetPipeline(null, "this/me");
+            GetUint64Command command = new GetUint64Command()
+            {
+                TableId = new byte[] { 0x02, 0x02, 0x03 },
+                Key = new byte[] { 0x14, 0x13 }
+            };
+            var bytes = ProtocolFormatter.Serialize<GetUint64Command>(Method.GetUint64, command);
+            actor.Tell(bytes);
+            
         }
 
         private static void DeleteDirect()

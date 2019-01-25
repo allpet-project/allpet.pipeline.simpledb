@@ -9,8 +9,9 @@ namespace SimplDb.Protocol.Sdk
         CreateTable=0x00,
         DeleteTable = 0x01,
         GetDirect = 0x02,
+        GetUint64 = 0x03,
         PutDirect = 0x04,
         PutUint64=0x08,
-        Delete=0x10
+        Delete=0x10,        
     }
 }

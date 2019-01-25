@@ -78,6 +78,9 @@ namespace SimplDb.Protocol.Sdk
                 case Method.GetDirect:
                     command = SimpledbMessageSwitch.BytesToCommand<GetDirectCommand>(commandByte);
                     break;
+                case Method.GetUint64:
+                    command = SimpledbMessageSwitch.BytesToCommand<GetUint64Command>(commandByte);
+                    break;
             }
             return command;
         }

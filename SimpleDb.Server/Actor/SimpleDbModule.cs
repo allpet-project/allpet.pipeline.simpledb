@@ -25,7 +25,7 @@ namespace SimpleDb.Server.Actor
             Console.WriteLine("SimpleDbModule");
             var command  = ProtocolFormatter.Deserialize(data);
 
-            ServerDomain domain = new ServerDomain(this.simpledb);
+            ServerDomain domain = new ServerDomain(this.simpledb, from);
             domain.ExcuteCommand(command);
 
         }
