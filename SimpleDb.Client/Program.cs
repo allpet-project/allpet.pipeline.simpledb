@@ -32,7 +32,7 @@ namespace SimpleDb.Client
                 var line = Console.ReadLine();
                 if (line == "0")
                 {
-                    TestNet();
+                    TestNetTransfer();
                 }
                 if (line == "1")
                 {
@@ -64,7 +64,7 @@ namespace SimpleDb.Client
                 }
             }
         }
-        private static void TestNet()
+        private static void TestNetTransfer()
         {
             var systemL = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
             systemL.OpenNetwork(new AllPet.peer.tcp.PeerOption());
