@@ -11,16 +11,23 @@ namespace SimpleDb.Server
         static void Main(string[] args)
         {
             Console.WriteLine("SimpleDb.Server Start.....");
-            var system = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
-            system.RegistModule("mainloop", new Module_Loop());
-            system.Start();
-            var pipe = system.GetPipeline(null, "this/mainloop");
-            while (pipe.IsVaild)
-            {
-                System.Threading.Thread.Sleep(100);
-            }
+            //var system = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
+            //system.RegistModule("mainloop", new Module_Loop());
+            //system.Start();
+            //var pipe = system.GetPipeline(null, "this/mainloop");
+            //while (pipe.IsVaild)
+            //{
+            //    System.Threading.Thread.Sleep(100);
+            //}
 
-           
+            var serverSys = AllPet.Pipeline.PipelineSystem.CreatePipelineSystemV1();
+            serverSys.OpenNetwork(new AllPet.peer.tcp.PeerOption());
+            serverSys.OpenListen(new System.Net.IPEndPoint(System.Net.IPAddress.Any, 8888));
+            serverSys.RegistModule("simpledb", new SimpleDbModule());
+            serverSys.Start();
+
+            
+
             Console.ReadLine();
         }
     }

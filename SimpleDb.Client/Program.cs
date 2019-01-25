@@ -78,6 +78,9 @@ namespace SimpleDb.Client
                     actor.Tell(new byte[8096]);
                 }
             }
+            systemL.CloseListen();
+            systemL.CloseNetwork();
+            systemL.Dispose();
         }
         private static void CreateTable()
         {
@@ -97,6 +100,9 @@ namespace SimpleDb.Client
                 var bytes = ProtocolFormatter.Serialize<CreatTableCommand>(Method.CreateTable, command);
                 actor.Tell(bytes);
             }
+            systemL.CloseListen();
+            systemL.CloseNetwork();
+            systemL.Dispose();
         }
         private static void PutDirect()
         {
@@ -116,6 +122,9 @@ namespace SimpleDb.Client
                 var bytes = ProtocolFormatter.Serialize< PutDirectCommand>(Method.PutDirect,command);
                 actor.Tell(bytes);
             }
+            systemL.CloseListen();
+            systemL.CloseNetwork();
+            systemL.Dispose();
         }
         private async static void GetDirect()
         {
@@ -148,6 +157,9 @@ namespace SimpleDb.Client
             //    bf.Serialize(ms, command);
             //    actor.Tell(ms.ToArray());
             //}
+            server.CloseListen();
+            server.CloseNetwork();
+            server.Dispose();
         }        
 
         private static void PutUInt64()
@@ -168,6 +180,9 @@ namespace SimpleDb.Client
                 var bytes = ProtocolFormatter.Serialize<PutUInt64Command>(Method.PutUint64, command);
                 actor.Tell(bytes);
             }
+            systemL.CloseListen();
+            systemL.CloseNetwork();
+            systemL.Dispose();
         }
         private async static void GetUInt64()
         {
@@ -188,7 +203,10 @@ namespace SimpleDb.Client
             };
             var bytes = ProtocolFormatter.Serialize<GetUint64Command>(Method.GetUint64, command);
             actor.Tell(bytes);
-            
+
+            server.CloseListen();
+            server.CloseNetwork();
+            server.Dispose();
         }
 
         private static void DeleteDirect()
@@ -208,6 +226,10 @@ namespace SimpleDb.Client
                 var bytes = ProtocolFormatter.Serialize<DeleteCommand>(Method.Delete, command);
                 actor.Tell(bytes);
             }
+
+            systemL.CloseListen();
+            systemL.CloseNetwork();
+            systemL.Dispose();
         }
 
         private static void DeleteTable()
@@ -226,6 +248,10 @@ namespace SimpleDb.Client
                 var bytes = ProtocolFormatter.Serialize<DeleteTableCommand>(Method.DeleteTable, command);
                 actor.Tell(bytes);
             }
+
+            systemL.CloseListen();
+            systemL.CloseNetwork();
+            systemL.Dispose();
         }
     }
 }
